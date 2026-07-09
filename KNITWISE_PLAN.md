@@ -321,3 +321,10 @@ Instantiated once. Hooks import from here and pass repos into use case calls.
 
 ## Project Notes
 - `counters`: `Counter[]` collection doesn't belong in the `Project` entity. The plan keeps counters as a completely separate aggregate fetched via `ICounterRepository.findByProjectId(projectId)`. `Project` shouldn't own or manage a counter collection — methods like `addCounter`, `removeCounter`, `getCounters` and the import of `Counter`, all contradict the plan's architecture. The use cases call the counter repo directly with a `projectId`; they never go through `project.addCounter()`.
+
+## TODO:
+- create repository interfaces
+- create calculators
+- `_layout.tsx` (DB + TanStack Query provider)
+- `(tabs)/_layout.tsx`, `(tabs)/index.tsx`, `(tabs)/calculators.tsx`
+- `project/[id]/index.tsx`, `project/[id]/counter/[counterId].tsx`, `project/[id]/pattern-counter/[counterId].tsx`
