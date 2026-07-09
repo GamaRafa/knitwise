@@ -17,7 +17,7 @@ export class PatternCounter extends Counter {
     }
 
     rowInPattern(): number {
-        return (this.value - 1) % this.patternLength + 1;   // TODO: check this access to this.value
+        return (this.value - 1) % this.patternLength + 1;
     }
 
     currentRepeat(): number {

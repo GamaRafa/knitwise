@@ -316,3 +316,8 @@ Instantiated once. Hooks import from here and pass repos into use case calls.
 | Mutation return value | Updated entity | TanStack Query updates cache directly without a refetch |
 | Cascade delete | Enabled via `ON DELETE CASCADE` + `PRAGMA foreign_keys = ON` | Deleting a project cleans up its counters automatically |
 | State management | TanStack Query for persisted data, `useState` for ephemeral UI | Clean split between server state and local UI state |
+| `Counter[]` on `Project` | there shouldn't be a `counters` property on `Project` | That's the repository layer's responsibility (more on **Project Notes**)|
+
+
+## Project Notes
+- `counters`: `Counter[]` collection doesn't belong in the `Project` entity. The plan keeps counters as a completely separate aggregate fetched via `ICounterRepository.findByProjectId(projectId)`. `Project` shouldn't own or manage a counter collection — methods like `addCounter`, `removeCounter`, `getCounters` and the import of `Counter`, all contradict the plan's architecture. The use cases call the counter repo directly with a `projectId`; they never go through `project.addCounter()`.

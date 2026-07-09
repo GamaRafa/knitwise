@@ -1,24 +1,15 @@
-import { Counter } from "../counter/Counter";
 import { ProjectId } from "../shared/types";
 
 export class Project {
-    readonly id: ProjectId;
-    private name: string;
-    readonly createdAt: Date;
-    private updatedAt: Date;
-    private readonly counters: Counter[] = [];
-
     constructor(
-        id: ProjectId,
-        name: string,
-        createdAt: Date,
-        updatedAt: Date
-    ) {
-        this.id = id;
-        this.name = name;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.counters = [];
+        readonly id: ProjectId,
+        private name: string,
+        readonly createdAt: Date,
+        private updatedAt: Date
+    ) {}
+
+    getName(): string {
+        return this.name;
     }
 
     rename(name: string): void {
@@ -26,27 +17,13 @@ export class Project {
             throw new Error("Project name cannot be empty");
         }
         this.name = name;
-        this.touch();
-    }
-
-    addCounter(counter: Counter): void {
-        this.counters.push(counter);
-        this.touch();
-    }
-    
-    removeCounter(counterId: string): void {
-        this.counters.splice(
-            this.counters.findIndex((counter) => counter.id === counterId),
-            1
-        );
-        this.touch();
-    }
-
-    getCounters(): Counter[] {
-        return this.counters;
-    }
-
-    private touch(): void {
-        this.updatedAt = new Date();
     }
 }
+
+/**
+ * counters: Counter[] collection doesn't belong here. The plan keeps counters as a completely separate aggregate 
+ * fetched via ICounterRepository.findByProjectId(projectId). Project shouldn't own or manage a 
+ * counter collection — the addCounter, removeCounter, getCounters methods, and the import of Counter, 
+ * all contradict the plan's architecture. The use cases call the counter repo directly with a projectId; 
+ * they never go through project.addCounter().
+ */
