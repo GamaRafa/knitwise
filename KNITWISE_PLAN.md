@@ -16,12 +16,12 @@
 DDD Lite + Clean Architecture. Four layers with strict dependency direction:
 Domain ← Use Cases ← Infrastructure / Presentation
 
-| Layer | Owns | Never touches |
-|---|---|---|
-| **Domain** | Entities, repository interfaces, calculators, business rules | DB, React, HTTP |
-| **Use Cases** | Orchestration, calls to repositories, returns updated entities | Domain logic, UI state |
-| **Infrastructure** | Drizzle schema, DB client, repository implementations, migrations | Business rules |
-| **Presentation** | Screens, components, hooks | Business logic, DB access |
+| Layer              | Owns                                                              | Never touches             |
+| ------------------ | ----------------------------------------------------------------- | ------------------------- |
+| **Domain**         | Entities, repository interfaces, calculators, business rules      | DB, React, HTTP           |
+| **Use Cases**      | Orchestration, calls to repositories, returns updated entities    | Domain logic, UI state    |
+| **Infrastructure** | Drizzle schema, DB client, repository implementations, migrations | Business rules            |
+| **Presentation**   | Screens, components, hooks                                        | Business logic, DB access |
 
 Hooks bridge TanStack Query to the use-case layer. Screens call hooks and render data — no business logic in components.
 
@@ -106,9 +106,9 @@ KnitwiseApp/
 ### `src/domain/shared/types.ts`
 
 ```ts
-type ProjectId = string
-type CounterId = string
-type CounterType = 'simple' | 'pattern'
+type ProjectId = string;
+type CounterId = string;
+type CounterType = "simple" | "pattern";
 ```
 
 `CounterType` is the Single Table Inheritance discriminator in the DB schema.
@@ -273,9 +273,9 @@ migration runner on startup.
 ### `src/infrastructure/container.ts`
 
 ```ts
-const db = openDatabase()
-export const projectRepo = new DrizzleProjectRepository(db)
-export const counterRepo = new DrizzleCounterRepository(db)
+const db = openDatabase();
+export const projectRepo = new DrizzleProjectRepository(db);
+export const counterRepo = new DrizzleCounterRepository(db);
 ```
 
 Instantiated once. Hooks import from here and pass repos into use case calls.
@@ -284,45 +284,46 @@ Instantiated once. Hooks import from here and pass repos into use case calls.
 
 ## Implementation Milestones
 
-| # | Commit | Deliverable | Done when |
-|---|---|---|---|
-| 1 | `chore: scaffold folder structure and tsconfig paths` | All `src/` folders, placeholder files, `@/` alias | Project compiles, no import errors |
-| 2 | `feat: database client, drizzle schema, and migrations` | DB opens on boot, schema defined, `PRAGMA foreign_keys = ON` set | App boots, DB file created on simulator |
-| 3 | `feat: domain entities` | `Project`, `Counter`, `PatternCounter` with all methods | Unit tests pass for `advance`, `decrement`, `reset`, `rowInPattern`, `currentRepeat` |
-| 4 | `feat: repository interfaces and drizzle implementations` | Both interfaces, both Drizzle implementations, `container.ts` | CRUD + cascade delete verified via integration test |
-| 5 | `feat: use cases` | All functions in `use-cases/project.ts` and `use-cases/counter.ts` | Each use case tested against real in-memory SQLite DB |
-| 6 | `feat: project list screen` | List, create, delete projects; TanStack Query wired | Full end-to-end on simulator |
-| 7 | `feat: project detail screen` | Navigate to project, see counter list with empty state | Navigation works, counters scoped to project |
-| 8 | `feat: simple counter screen` | `+` / `−` / reset, value display | Counter state persists across app restarts |
-| 9 | `feat: pattern counter screen` | Same as counter plus repeat/row-in-pattern display | Computed values update correctly on advance and decrement |
-| 10 | `feat: distribution calculators` | Algorithm + calculator screen with inputs and result | Results manually verified against known knitting examples |
+| #   | Commit                                                    | Deliverable                                                        | Done when                                                                            |
+| --- | --------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| 1   | `chore: scaffold folder structure and tsconfig paths`     | All `src/` folders, placeholder files, `@/` alias                  | Project compiles, no import errors                                                   |
+| 2   | `feat: database client, drizzle schema, and migrations`   | DB opens on boot, schema defined, `PRAGMA foreign_keys = ON` set   | App boots, DB file created on simulator                                              |
+| 3   | `feat: domain entities`                                   | `Project`, `Counter`, `PatternCounter` with all methods            | Unit tests pass for `advance`, `decrement`, `reset`, `rowInPattern`, `currentRepeat` |
+| 4   | `feat: repository interfaces and drizzle implementations` | Both interfaces, both Drizzle implementations, `container.ts`      | CRUD + cascade delete verified via integration test                                  |
+| 5   | `feat: use cases`                                         | All functions in `use-cases/project.ts` and `use-cases/counter.ts` | Each use case tested against real in-memory SQLite DB                                |
+| 6   | `feat: project list screen`                               | List, create, delete projects; TanStack Query wired                | Full end-to-end on simulator                                                         |
+| 7   | `feat: project detail screen`                             | Navigate to project, see counter list with empty state             | Navigation works, counters scoped to project                                         |
+| 8   | `feat: simple counter screen`                             | `+` / `−` / reset, value display                                   | Counter state persists across app restarts                                           |
+| 9   | `feat: pattern counter screen`                            | Same as counter plus repeat/row-in-pattern display                 | Computed values update correctly on advance and decrement                            |
+| 10  | `feat: distribution calculators`                          | Algorithm + calculator screen with inputs and result               | Results manually verified against known knitting examples                            |
 
 ---
 
 ## Decisions Log
 
-| Decision | Choice | Reason |
-|---|---|---|
-| Counter hierarchy | `Counter` (concrete) + `PatternCounter extends Counter` | `Counter` is a valid standalone concept; abstract base adds indirection without benefit |
-| Calculator location | `domain/calculators/` | Pure mathematical functions with no dependencies; not domain services (which coordinate entities) |
-| ID type | Type aliases (`type ProjectId = string`) | Sufficient for local-only app; class-based IDs add friction with Drizzle and serialization |
-| DB discriminator | Single Table Inheritance on `counters` | One table simpler than join; sparse `pattern_length` column is acceptable |
-| Counter floor | 1 | No such thing as row 0 in knitting |
-| Counter start value | 1 | Standard in knitting |
-| `step` property | Removed | Always 1; you cannot knit two rows at a time |
-| `totalRepeats` | Removed | Knitter decides when to stop; a target repeat count would need reconfiguring mid-project |
-| `isComplete` | Removed | Follows from removing `totalRepeats` |
-| Undo mechanism | `decrement()` method (the `−` button) | No history needed; single-step undo is sufficient |
-| Mutation return value | Updated entity | TanStack Query updates cache directly without a refetch |
-| Cascade delete | Enabled via `ON DELETE CASCADE` + `PRAGMA foreign_keys = ON` | Deleting a project cleans up its counters automatically |
-| State management | TanStack Query for persisted data, `useState` for ephemeral UI | Clean split between server state and local UI state |
-| `Counter[]` on `Project` | there shouldn't be a `counters` property on `Project` | That's the repository layer's responsibility (more on **Project Notes**)|
-
+| Decision                 | Choice                                                         | Reason                                                                                            |
+| ------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Counter hierarchy        | `Counter` (concrete) + `PatternCounter extends Counter`        | `Counter` is a valid standalone concept; abstract base adds indirection without benefit           |
+| Calculator location      | `domain/calculators/`                                          | Pure mathematical functions with no dependencies; not domain services (which coordinate entities) |
+| ID type                  | Type aliases (`type ProjectId = string`)                       | Sufficient for local-only app; class-based IDs add friction with Drizzle and serialization        |
+| DB discriminator         | Single Table Inheritance on `counters`                         | One table simpler than join; sparse `pattern_length` column is acceptable                         |
+| Counter floor            | 1                                                              | No such thing as row 0 in knitting                                                                |
+| Counter start value      | 1                                                              | Standard in knitting                                                                              |
+| `step` property          | Removed                                                        | Always 1; you cannot knit two rows at a time                                                      |
+| `totalRepeats`           | Removed                                                        | Knitter decides when to stop; a target repeat count would need reconfiguring mid-project          |
+| `isComplete`             | Removed                                                        | Follows from removing `totalRepeats`                                                              |
+| Undo mechanism           | `decrement()` method (the `−` button)                          | No history needed; single-step undo is sufficient                                                 |
+| Mutation return value    | Updated entity                                                 | TanStack Query updates cache directly without a refetch                                           |
+| Cascade delete           | Enabled via `ON DELETE CASCADE` + `PRAGMA foreign_keys = ON`   | Deleting a project cleans up its counters automatically                                           |
+| State management         | TanStack Query for persisted data, `useState` for ephemeral UI | Clean split between server state and local UI state                                               |
+| `Counter[]` on `Project` | there shouldn't be a `counters` property on `Project`          | That's the repository layer's responsibility (more on **Project Notes**)                          |
 
 ## Project Notes
+
 - `counters`: `Counter[]` collection doesn't belong in the `Project` entity. The plan keeps counters as a completely separate aggregate fetched via `ICounterRepository.findByProjectId(projectId)`. `Project` shouldn't own or manage a counter collection — methods like `addCounter`, `removeCounter`, `getCounters` and the import of `Counter`, all contradict the plan's architecture. The use cases call the counter repo directly with a `projectId`; they never go through `project.addCounter()`.
 
 ## TODO:
+
 - create repository interfaces
 - create calculators
 - `_layout.tsx` (DB + TanStack Query provider)
