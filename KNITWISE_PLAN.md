@@ -324,8 +324,8 @@ Instantiated once. Hooks import from here and pass repos into use case calls.
 
 ## TODO:
 
-- create repository interfaces
-- create calculators
+- create repository interfaces (ask Copilot about them, but implement manually)
+- create calculators (same as above)
 - `_layout.tsx` (DB + TanStack Query provider)
 - `(tabs)/_layout.tsx`, `(tabs)/index.tsx`, `(tabs)/calculators.tsx`
 - `project/[id]/index.tsx`, `project/[id]/counter/[counterId].tsx`, `project/[id]/pattern-counter/[counterId].tsx`
