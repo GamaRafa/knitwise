@@ -1,8 +1,9 @@
+import { CounterId, ProjectId } from "../shared/types";
 import { Counter } from "./Counter";
 
-export class ICounterRepository {
-  findByProjectId(projectId: string): Promise<Counter[]> {} // projectId: string or projectId: ProjectId?
-  findById(id: string): Promise<Counter | null> {} // id: string or id: CounterId?
-  save(counter: Counter): Promise<void> {}
-  delete(id: string): Promise<void> {} // id: string or id: CounterId?
+export interface ICounterRepository {
+  findByProjectId(projectId: ProjectId): Promise<Counter[]>
+  findById(id: CounterId): Promise<Counter | null>
+  save(counter: Counter): Promise<void>
+  delete(id: CounterId): Promise<void>
 }
