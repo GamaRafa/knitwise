@@ -5,7 +5,7 @@ export class Project {
     readonly id: ProjectId,
     private name: string,
     readonly createdAt: Date,
-    private updatedAt: Date
+    readonly updatedAt: Date
   ) {}
 
   getName(): string {

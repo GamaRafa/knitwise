@@ -8,6 +8,7 @@
 - Drizzle ORM
 - TanStack Query (server state)
 - `useState` (ephemeral UI state)
+- Jest + ts-jest for unit tests of domain entities and calculators
 
 ---
 
@@ -93,6 +94,13 @@ KnitwiseApp/
 │           ├── useProject.ts
 │           ├── useCounters.ts
 │           └── useDistribution.ts
+│
+├── tests/
+│   └── domain/
+│       ├── calculators/
+│       ├── counter/
+│       ├── pattern-counter/
+│       └── project/
 │
 └── assets/
 ```
@@ -282,6 +290,12 @@ Instantiated once. Hooks import from here and pass repos into use case calls.
 
 ---
 
+## Current Status
+
+- Milestone 3 is now effectively complete: the domain entities are implemented and covered by unit tests.
+- The core calculator logic for milestone 10 is implemented; the calculator screen/UI remains to be built.
+- Tests currently live under `tests/domain/` and cover the domain entities and calculators.
+
 ## Implementation Milestones
 
 | #   | Commit                                                    | Deliverable                                                        | Done when                                                                            |
@@ -324,8 +338,9 @@ Instantiated once. Hooks import from here and pass repos into use case calls.
 
 ## TODO:
 
-- create repository interfaces (ask Copilot about them, but implement manually)
-- create calculators (same as above)
+- ~~create repository interfaces~~
+- ~~create calculators~~
+- ~~write domain entity and calculator tests~~
 - `_layout.tsx` (DB + TanStack Query provider)
 - `(tabs)/_layout.tsx`, `(tabs)/index.tsx`, `(tabs)/calculators.tsx`
 - `project/[id]/index.tsx`, `project/[id]/counter/[counterId].tsx`, `project/[id]/pattern-counter/[counterId].tsx`

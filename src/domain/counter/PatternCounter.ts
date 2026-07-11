@@ -2,15 +2,13 @@ import { CounterId, ProjectId } from "../shared/types";
 import { Counter } from "./Counter";
 
 export class PatternCounter extends Counter {
-  private patternLength: number;
-
   constructor(
-    id: CounterId,
-    projectId: ProjectId,
-    name: string,
-    value: number,
-    createdAt: Date,
-    patternLength: number
+    readonly id: CounterId,
+    readonly projectId: ProjectId,
+    readonly name: string,
+    protected value: number,
+    readonly createdAt: Date,
+    readonly patternLength: number
   ) {
     super(id, projectId, "pattern", name, value, createdAt);
     this.patternLength = patternLength;
