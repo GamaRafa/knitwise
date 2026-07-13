@@ -5,25 +5,18 @@ import { Counter } from "@/domain/counter/Counter";
 import { PatternCounter } from "@/domain/counter/PatternCounter";
 import { CounterId, CounterType, ProjectId } from "@/domain/shared/types";
 import { counters } from "../db/schema";
-
-function getDefaultConnection() {
-  return require("../db/client").default;
-}
+import { BaseSQLiteDatabase } from "drizzle-orm/sqlite-core";
 
 type CounterRow = InferSelectModel<typeof counters>;
 
 export class DrizzleCounterRepository implements ICounterRepository {
-  constructor(private readonly connection?: any) {}
-
-  private getDb() {
-    return this.connection ?? getDefaultConnection();
-  }
+  constructor(private db: BaseSQLiteDatabase<any, any, any, any>) {}
 
   private mapRowToCounter(row: CounterRow): Counter {
     if (row.type === "pattern") {
       return new PatternCounter(
-        row.id,
-        row.project_id,
+        row.id as CounterId,
+        row.project_id as ProjectId,
         row.name,
         row.value,
         new Date(row.createdAt),
@@ -32,8 +25,8 @@ export class DrizzleCounterRepository implements ICounterRepository {
     }
 
     return new Counter(
-      row.id,
-      row.project_id,
+      row.id as CounterId,
+      row.project_id as ProjectId,
       row.type as CounterType,
       row.name,
       row.value,
@@ -42,21 +35,22 @@ export class DrizzleCounterRepository implements ICounterRepository {
   }
 
   async findByProjectId(projectId: ProjectId): Promise<Counter[]> {
-    const rows = await this.getDb().select().from(counters).where(eq(counters.project_id, projectId));
+    const rows = await this.db.select().from(counters).where(eq(counters.project_id, projectId));
 
     return rows.map((row: CounterRow) => this.mapRowToCounter(row));
   }
 
   async findById(id: CounterId): Promise<Counter | null> {
-    const row = await this.getDb().select().from(counters).where(eq(counters.id, id)).limit(1).get();
+    const row = await this.db.select().from(counters).where(eq(counters.id, id)).limit(1).get();
 
     return row ? this.mapRowToCounter(row) : null;
   }
 
+  // upsert: tries to create new, if it already exists, updates the record. But is this the best approach?
   async save(counter: Counter): Promise<void> {
     const isPattern = counter instanceof PatternCounter;
 
-    await this.getDb()
+    await this.db
       .insert(counters)
       .values({
         id: counter.id,
@@ -81,6 +75,6 @@ export class DrizzleCounterRepository implements ICounterRepository {
   }
 
   async delete(id: CounterId): Promise<void> {
-    await this.getDb().delete(counters).where(eq(counters.id, id));
+    await this.db.delete(counters).where(eq(counters.id, id));
   }
 }

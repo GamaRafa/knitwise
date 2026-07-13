@@ -14,5 +14,3 @@ export type IncreaseResult = BaseDistribution & {
   type: "increase";
   targetStitches: number; // originalStitches + changes
 }
-
-export type DistributionResult = DecreaseResult | IncreaseResult;

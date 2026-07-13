@@ -15,17 +15,17 @@ counters
   created_at     INTEGER NOT NULL
  */
 
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export const projects = sqliteTable('projects', {
-  id: text('id').primaryKey(),  // maybe use uuidv4() for generating unique ids
+  id: text('id').primaryKey(),
   name: text('name').notNull(),
   createdAt: integer('created_at').notNull(),
   updatedAt: integer('updated_at').notNull()
 });
 
 export const counters = sqliteTable('counters', {
-  id: text('id').primaryKey(),  // maybe use uuidv4() for generating unique ids
+  id: text('id').primaryKey(),
   project_id: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
   type: text('type').notNull(),  // 'simple' | 'pattern'
   name: text('name').notNull(),
