@@ -14,7 +14,7 @@ export class DrizzleProjectRepository implements IProjectRepository {
     const rows = await this.db.select().from(projects);
 
     return rows.map(
-      (row: ProjectRow) => new Project(row.id as ProjectId, row.name, new Date(row.createdAt), new Date(row.updatedAt))
+      (row: ProjectRow) => Project.restore(row.id as ProjectId, row.name, new Date(row.createdAt), new Date(row.updatedAt))
     );
   }
 
@@ -22,7 +22,7 @@ export class DrizzleProjectRepository implements IProjectRepository {
     const row = await this.db.select().from(projects).where(eq(projects.id, id)).limit(1).get();
 
     return row
-      ? new Project(row.id, row.name, new Date(row.createdAt), new Date(row.updatedAt))
+      ? Project.restore(row.id, row.name, new Date(row.createdAt), new Date(row.updatedAt))
       : null;
   }
 
