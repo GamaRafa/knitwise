@@ -1,7 +1,8 @@
 import { Project } from "@/domain/project/Project";
 import { ProjectId } from "@/domain/shared/types";
 
-// const PROJECT_ID = createProjectId();
+// can't use const PROJECT_ID = createProjectId(); 
+// because expo-crypto can't be loaded by the test
 const PROJECT_ID = "project-1" as ProjectId;
 
 function createProject(name = "Sweater") {

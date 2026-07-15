@@ -1,4 +1,6 @@
 import * as Crypto from "expo-crypto";
+import { Counter } from "../counter/Counter";
+import { PatternCounter } from "../counter/PatternCounter";
 
 export type CounterType = "simple" | "pattern";
 
@@ -19,4 +21,10 @@ export function createProjectId(): ProjectId {
 
 export function createCounterId(): CounterId {
   return Crypto.randomUUID() as CounterId;
+}
+
+export type AnyCounter = Counter | PatternCounter;
+
+export function isPatternCounter(counter: AnyCounter): counter is PatternCounter {
+  return counter instanceof PatternCounter || 'patternLength' in counter;
 }
