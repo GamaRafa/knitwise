@@ -12,7 +12,6 @@ export async function createProject(repository: IProjectRepository, name: string
 export async function renameProject(repository: IProjectRepository, id: ProjectId, newName: string): Promise<void> {
   const project = await repository.findById(id);
   
-  // do I really need this?
   if (!project) {
     throw new Error("Project not found");
   }

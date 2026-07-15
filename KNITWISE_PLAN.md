@@ -353,3 +353,6 @@ Instantiated once. Hooks import from here and pass repos into use case calls.
 - `_layout.tsx` (DB + TanStack Query provider)
 - `(tabs)/_layout.tsx`, `(tabs)/index.tsx`, `(tabs)/calculators.tsx`
 - `project/[id]/index.tsx`, `project/[id]/counter/[counterId].tsx`, `project/[id]/pattern-counter/[counterId].tsx`
+- create counter use cases
+- create FakeDB for testing
+- testing use cases with FakeDb
