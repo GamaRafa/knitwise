@@ -28,22 +28,21 @@ export class DrizzleProjectRepository implements IProjectRepository {
 
   // upsert: tries to create new, if it already exists, updates the record. But is this the best approach?
   async save(project: Project): Promise<void> {
-    const now = new Date();
 
     await this.db
       .insert(projects)
       .values({
         id: project.id,
-        name: project.getName(),
+        name: project.name,
         createdAt: project.createdAt.getTime(),
-        updatedAt: now.getTime(),
+        updatedAt: project.updatedAt.getTime()
       })
       .onConflictDoUpdate({
         target: projects.id,
         set: {
-          name: project.getName(),
+          name: project.name,
           createdAt: project.createdAt.getTime(),
-          updatedAt: now.getTime(),
+          updatedAt: project.updatedAt.getTime()
         },
       });
   }

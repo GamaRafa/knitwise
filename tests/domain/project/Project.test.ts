@@ -1,5 +1,5 @@
 import { Project } from "@/domain/project/Project";
-import { createProjectId, ProjectId } from "@/domain/shared/types";
+import { ProjectId } from "@/domain/shared/types";
 
 // const PROJECT_ID = createProjectId();
 const PROJECT_ID = "project-1" as ProjectId;
@@ -8,26 +8,26 @@ function createProject(name = "Sweater") {
   return Project.create(PROJECT_ID, name);
 }
 
-describe.only("Project Domain Entity", () => {
+describe("Project Domain Entity", () => {
   it("creates a project", () => {
     const project = createProject();
 
-    expect(project.getName()).toBe("Sweater");
+    expect(project.name).toBe("Sweater");
   });
 
   it("trims the project name", () => {
     const project = createProject("  Sweater  ");
-    expect(project.getName()).toBe("Sweater");
+    expect(project.name).toBe("Sweater");
   });
 
   it("sets createdAt and updatedAt", () => {
     const project = createProject();
 
     expect(project.createdAt).toBeInstanceOf(Date);
-    expect(project.getUpdatedAt()).toBeInstanceOf(Date);
+    expect(project.updatedAt).toBeInstanceOf(Date);
 
     expect(project.createdAt.getTime())
-      .toBe(project.getUpdatedAt().getTime());
+      .toBe(project.updatedAt.getTime());
   });
 
   it("throws when name is empty", () => {
@@ -47,8 +47,8 @@ describe.only("Project Domain Entity", () => {
     );
 
     expect(project.createdAt).toBe(createdAt);
-    expect(project.getUpdatedAt()).toBe(updatedAt);
-    expect(project.getName()).toBe("Sweater");
+    expect(project.updatedAt).toBe(updatedAt);
+    expect(project.name).toBe("Sweater");
   });
 
   it("renames a project", () => {
@@ -56,7 +56,7 @@ describe.only("Project Domain Entity", () => {
 
     project.rename("Scarf");
 
-    expect(project.getName()).toBe("Scarf");
+    expect(project.name).toBe("Scarf");
   });
 
   it("trims the new name", () => {
@@ -64,19 +64,21 @@ describe.only("Project Domain Entity", () => {
 
     project.rename("  Scarf  ");
 
-    expect(project.getName()).toBe("Scarf");
+    expect(project.name).toBe("Scarf");
   });
 
-  it("updates updatedAt when renamed", async () => {
+  it("updates updatedAt when renamed", () => {
+    jest.useFakeTimers();
+    
     const project = createProject();
-    const oldDate = project.getUpdatedAt();
+    const oldDate = project.updatedAt;
 
-    await new Promise(resolve => setTimeout(resolve, 5));
-
+    jest.advanceTimersByTime(1000);
     project.rename("Scarf");
 
-    expect(project.getUpdatedAt().getTime())
-      .toBeGreaterThan(oldDate.getTime());
+    expect(project.updatedAt.getTime()).toBeGreaterThan(oldDate.getTime());
+
+    jest.useRealTimers();
   });
 
   it("throws when renaming to an empty name", () => {

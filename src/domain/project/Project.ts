@@ -3,9 +3,9 @@ import { ProjectId } from "../shared/types";
 export class Project {
   private constructor(
     readonly id: ProjectId,
-    private name: string,
+    private _name: string,
     readonly createdAt: Date,
-    private updatedAt: Date
+    private _updatedAt: Date
   ) {}
 
   // factory method
@@ -21,16 +21,16 @@ export class Project {
 
   rename(name: string): void {
     Project.validateName(name);
-    this.name = name.trim();
-    this.updatedAt = new Date();
+    this._name = name.trim();
+    this._updatedAt = new Date();
   }
 
-  getName(): string {
-    return this.name;
+  get name(): string {
+    return this._name;
   }
 
-  getUpdatedAt(): Date {
-    return this.updatedAt;
+  get updatedAt(): Date {
+    return this._updatedAt;
   }
 
   private static validateName(name: string): void {
