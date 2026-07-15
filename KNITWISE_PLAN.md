@@ -249,12 +249,21 @@ by default. This is what enforces cascade delete when a project is deleted.
 
 ### `src/use-cases/project.ts`
 
-```
-createProject(repo, name):          Promise<Project>
-listProjects(repo):                 Promise<Project[]>
-getProject(repo, id):               Promise<Project | null>
-deleteProject(repo, id):            Promise<void>
-```
+#### createProject(repo, name):          Promise<Project>
+>createProjectId() -> Project.create(id, name) -> repo.save(project)
+
+#### renameProject(repo, id, newName)    Promise<void>
+>repo.findById(id) (if not found throw error) -> project.rename() -> repo.save(project)
+
+#### listProjects(repo):                 Promise<Project[]>
+>repo.findAll()
+
+#### getProject(repo, id):               Promise<Project | null>
+>repo.findById(id)
+
+#### deleteProject(repo, id):            Promise<void>
+>repo.delete(id)
+
 
 ### `src/use-cases/counter.ts`
 
