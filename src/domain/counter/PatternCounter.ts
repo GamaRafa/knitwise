@@ -12,14 +12,16 @@ export class PatternCounter {
     id: CounterId,
     projectId: ProjectId,
     name: string,
-    value: number,
     patternLength: number
   ): PatternCounter {
     if (patternLength <= 0) {
       throw new Error("Pattern length must be greater than 0");
     }
 
-    const baseCounter = Counter.create(id, projectId, "pattern", name, value);
+    this.validateName(name);
+    const now = new Date();
+
+    const baseCounter = Counter.createBaseForPattern(id, projectId, name);
     return new PatternCounter(baseCounter, patternLength);
   }
 
@@ -69,5 +71,11 @@ export class PatternCounter {
 
   currentRepeat(): number {
     return Math.floor((this.value - 1) / this.patternLength) + 1;
+  }
+
+  private static validateName(name: string): void {
+    if (!name || name.trim().length === 0) {
+      throw new Error("Counter name cannot be empty")
+    }
   }
 }

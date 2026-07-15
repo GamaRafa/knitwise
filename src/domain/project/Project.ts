@@ -1,4 +1,6 @@
-import { ProjectId } from "../shared/types";
+import { Counter } from "../counter/Counter";
+import { PatternCounter } from "../counter/PatternCounter";
+import { CounterId, ProjectId } from "../shared/types";
 
 export class Project {
   private constructor(
@@ -17,6 +19,14 @@ export class Project {
 
   static restore(id: ProjectId, name: string, createdAt: Date, updatedAt: Date): Project {
     return new Project(id, name, createdAt, updatedAt);
+  }
+
+  createCounter(counterId: CounterId, name: string): Counter {
+    return Counter.create(counterId, this.id, name);
+  }
+
+  createPatternCounter(counterId: CounterId, name: string, patternLength: number): PatternCounter {
+    return PatternCounter.create(counterId, this.id, name, patternLength);
   }
 
   rename(name: string): void {

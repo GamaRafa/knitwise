@@ -14,13 +14,23 @@ export class Counter {
   static create(
     id: CounterId, 
     projectId: ProjectId,
-    type: CounterType,
     name: string,
-    value: number
-  ) {
-    this.validatedName(name);
+  ): Counter {
+    this.validateName(name);
     const now = new Date();
-    return new Counter(id, projectId, type, name, value, now);
+    return new Counter(id, projectId, "simple", name, 1, now);
+  }
+
+  // factory method for creating a Counter with type="pattern"
+  // used in the PatternCounter entity
+  static createBaseForPattern(
+    id: CounterId,
+    projectId: ProjectId,
+    name: string
+  ): Counter {
+    this.validateName(name);
+    const now = new Date();
+    return new Counter(id, projectId, "pattern", name, 1, now);
   }
 
   // factory method for database hydration
@@ -48,7 +58,7 @@ export class Counter {
   }
 
   rename(name: string): void {
-    Counter.validatedName(name);
+    Counter.validateName(name);
     this._name = name.trim();
   }
 
@@ -60,7 +70,7 @@ export class Counter {
     return this._value;
   }
 
-  private static validatedName(name: string): void {
+  private static validateName(name: string): void {
     if (!name || name.trim().length === 0) {
       throw new Error("Counter name cannot be empty")
     }
