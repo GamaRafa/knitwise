@@ -1,4 +1,5 @@
 import { CounterId, CounterType, ProjectId } from "../shared/types";
+import { validateName } from "../shared/validators";
 import { Counter } from "./Counter";
 
 export class PatternCounter {
@@ -18,7 +19,7 @@ export class PatternCounter {
       throw new Error("Pattern length must be greater than 0");
     }
 
-    this.validateName(name);
+    const validatedName = validateName(name, "PatternCounter");
     const now = new Date();
 
     const baseCounter = Counter.createBaseForPattern(id, projectId, name);
@@ -71,11 +72,5 @@ export class PatternCounter {
 
   currentRepeat(): number {
     return Math.floor((this.value - 1) / this.patternLength) + 1;
-  }
-
-  private static validateName(name: string): void {
-    if (!name || name.trim().length === 0) {
-      throw new Error("Counter name cannot be empty")
-    }
   }
 }

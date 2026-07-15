@@ -1,6 +1,7 @@
 import { Counter } from "../counter/Counter";
 import { PatternCounter } from "../counter/PatternCounter";
 import { CounterId, ProjectId } from "../shared/types";
+import { validateName } from "../shared/validators";
 
 export class Project {
   private constructor(
@@ -12,9 +13,9 @@ export class Project {
 
   // factory method
   static create(id: ProjectId, name: string): Project {
-    this.validateName(name)
+    const validatedName = validateName(name, "Project")
     const now = new Date();
-    return new Project(id, name.trim(), now, now);
+    return new Project(id, validatedName, now, now);
   }
 
   static restore(id: ProjectId, name: string, createdAt: Date, updatedAt: Date): Project {
@@ -30,8 +31,7 @@ export class Project {
   }
 
   rename(name: string): void {
-    Project.validateName(name);
-    this._name = name.trim();
+    this._name = validateName(name, "Project");
     this._updatedAt = new Date();
   }
 
@@ -41,11 +41,5 @@ export class Project {
 
   get updatedAt(): Date {
     return this._updatedAt;
-  }
-
-  private static validateName(name: string): void {
-    if (!name || name.trim().length === 0) {
-      throw new Error("Project name cannot be empty")
-    }
   }
 }

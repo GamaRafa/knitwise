@@ -1,9 +1,10 @@
 import { Project } from "@/domain/project/Project";
-import { ProjectId } from "@/domain/shared/types";
+import { CounterId, ProjectId } from "@/domain/shared/types";
 
 // can't use const PROJECT_ID = createProjectId(); 
 // because expo-crypto can't be loaded by the test
 const PROJECT_ID = "project-1" as ProjectId;
+const COUNTER_ID = "counter-1" as CounterId;
 
 function createProject(name = "Sweater") {
   return Project.create(PROJECT_ID, name);
@@ -88,5 +89,26 @@ describe("Project Domain Entity", () => {
     expect(() =>
       project.rename("")
     ).toThrow("Project name cannot be empty");
+  });
+
+  it("creates a Counter for a Project", () => {
+    const project = createProject();
+    const counterName = "Left Sleeve";
+
+    const counter = project.createCounter(COUNTER_ID, counterName);
+
+    expect(counter.name).toBe(counterName);
+    expect(counter.type).toBe("simple");
+  });
+
+  it("creates a PatternCounter for a Project", () => {
+    const project = createProject();
+    const counterName = "Cable";
+
+    const counter = project.createPatternCounter(COUNTER_ID, counterName, 8);
+
+    expect(counter.name).toBe(counterName);
+    expect(counter.type).toBe("pattern");
+    expect(counter.patternLength).toBe(8);
   });
 });

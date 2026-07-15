@@ -1,4 +1,5 @@
 import { CounterId, CounterType, ProjectId } from "../shared/types";
+import { validateName } from "../shared/validators";
 
 export class Counter {
   private constructor(
@@ -16,9 +17,9 @@ export class Counter {
     projectId: ProjectId,
     name: string,
   ): Counter {
-    this.validateName(name);
+    const validatedName = validateName(name, "Counter");
     const now = new Date();
-    return new Counter(id, projectId, "simple", name, 1, now);
+    return new Counter(id, projectId, "simple", validatedName, 1, now);
   }
 
   // factory method for creating a Counter with type="pattern"
@@ -28,9 +29,9 @@ export class Counter {
     projectId: ProjectId,
     name: string
   ): Counter {
-    this.validateName(name);
+    const validatedName = validateName(name, "Counter");
     const now = new Date();
-    return new Counter(id, projectId, "pattern", name, 1, now);
+    return new Counter(id, projectId, "pattern", validatedName, 1, now);
   }
 
   // factory method for database hydration
@@ -58,8 +59,7 @@ export class Counter {
   }
 
   rename(name: string): void {
-    Counter.validateName(name);
-    this._name = name.trim();
+    this._name = validateName(name, "Counter");
   }
 
   get name(): string {
@@ -68,11 +68,5 @@ export class Counter {
 
   get value(): number {
     return this._value;
-  }
-
-  private static validateName(name: string): void {
-    if (!name || name.trim().length === 0) {
-      throw new Error("Counter name cannot be empty")
-    }
   }
 }
