@@ -1,10 +1,8 @@
 import { Project } from "@/domain/project/Project";
-import { CounterId, ProjectId } from "@/domain/shared/types";
+import { createCounterId, createProjectId } from "@/domain/shared/types";
 
-// can't use const PROJECT_ID = createProjectId(); 
-// because expo-crypto can't be loaded by the test
-const PROJECT_ID = "project-1" as ProjectId;
-const COUNTER_ID = "counter-1" as CounterId;
+const PROJECT_ID = createProjectId();
+const COUNTER_ID = createCounterId();
 
 function createProject(name = "Sweater") {
   return Project.create(PROJECT_ID, name);

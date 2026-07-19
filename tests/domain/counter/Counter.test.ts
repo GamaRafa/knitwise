@@ -1,8 +1,8 @@
 import { Counter } from "@/domain/counter/Counter"
-import { CounterId, CounterType, ProjectId } from "@/domain/shared/types"
+import { createCounterId, createProjectId } from "@/domain/shared/types"
 
-const PROJECT_ID = "project-1" as ProjectId;
-const COUNTER_ID = "counter-1" as CounterId;
+const PROJECT_ID = createProjectId();
+const COUNTER_ID = createCounterId();
 
 function createCounter() {
   return Counter.create(COUNTER_ID, PROJECT_ID, "Test Counter");

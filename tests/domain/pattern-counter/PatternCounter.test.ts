@@ -1,8 +1,8 @@
 import { PatternCounter } from "@/domain/counter/PatternCounter";
-import { CounterId, ProjectId } from "@/domain/shared/types";
+import { createCounterId, createProjectId } from "@/domain/shared/types";
 
-const PROJECT_ID = "project-1" as ProjectId;
-const COUNTER_ID = "counter-1" as CounterId;
+const PROJECT_ID = createProjectId();
+const COUNTER_ID = createCounterId();
 
 function createPatternCounter(patternLength: number = 8) {
   return PatternCounter.create(
